@@ -19,7 +19,7 @@ protocol PresentationModalDelegate: AnyObject {
     
 }
 
-class MainView: UIViewController {
+open class MainView: UIViewController {
     
     // MARK: - Views
     private lazy var scrollView: BaseScrollView = {
@@ -86,24 +86,24 @@ class MainView: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Lifecycle
-    override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         addPanGesture()
         addDimmedView()
         setCustomStyleContentViewConstraints()
     }
     
-    override func viewDidLayoutSubviews() {
+    open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setStyle()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         UIView.animate(withDuration: 0.15) {
             self.dimmedView.removeFromSuperview()
@@ -207,7 +207,7 @@ extension MainView: HeaderViewDelegate {
 
 // MARK: - UIGestureRecognizerDelegate
 extension MainView: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return (scrollView.contentOffset.y == 0)
     }
