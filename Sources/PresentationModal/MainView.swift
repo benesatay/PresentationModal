@@ -197,15 +197,15 @@ open class MainView: UIViewController {
 
 // MARK: - PanModalHeaderViewDelegate
 extension MainView: HeaderViewDelegate {
-    func didBackButtonTapped() {
+    public func didBackButtonTapped() {
         didViewDismissed {}
     }
     
-    func setSeperatorStyle(_ view: UIView) {
+    public func setSeperatorStyle(_ view: UIView) {
         
     }
     
-    func setCloseButtonStyle(_ button: UIButton) {
+    public func setCloseButtonStyle(_ button: UIButton) {
         
     }
 }
