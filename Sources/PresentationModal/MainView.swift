@@ -28,7 +28,7 @@ open class MainView: UIViewController {
         return view
     }()
     
-    private lazy var contentView: UIView = {
+    lazy var contentView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
         return view
