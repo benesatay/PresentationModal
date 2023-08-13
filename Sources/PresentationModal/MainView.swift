@@ -16,7 +16,7 @@ protocol PresentationModalDelegate: AnyObject {
     
 }
 
-open class MainView: UIViewController, HeaderViewDelegate {
+open class MainView: UIViewController {
     
     // MARK: - Views
     private lazy var scrollView: BaseScrollView = {
@@ -196,21 +196,15 @@ open class MainView: UIViewController, HeaderViewDelegate {
         
     }
     
-    // MARK: - PanModalHeaderViewDelegate
-    open func didBackButtonTapped() {
-        dismissView()
-    }
-    
-    open func setSeperatorStyle(_ view: UIView) {
-        
-    }
-    
-    open func setCloseButtonStyle(_ button: UIButton) {
-        
-    }
-    
     // MARK: - Public Methods
     
+}
+
+// MARK: - HeaderViewDelegate
+extension MainView: HeaderViewDelegate {
+    public func didBackButtonTapped() {
+        dismissView()
+    }
 }
 
 // MARK: - UIGestureRecognizerDelegate

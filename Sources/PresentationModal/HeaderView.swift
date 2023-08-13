@@ -10,11 +10,15 @@ import SnapKit
 
 public protocol HeaderViewDelegate: AnyObject {
     func didBackButtonTapped()
-    func setSeperatorStyle(_ view: UIView)
-    func setCloseButtonStyle(_ button: UIButton)
 }
 
-extension HeaderViewDelegate {
+public protocol HeaderViewDataSource: AnyObject {
+    func setSeperatorStyle(_ view: UIView)
+    func setCloseButtonStyle(_ button: UIButton)
+
+}
+
+extension HeaderViewDataSource {
     func setSeperatorStyle(_ view: UIView) {}
     func setCloseButtonStyle(_ button: UIButton) {}
 }
@@ -23,7 +27,7 @@ extension HeaderViewDelegate {
 //    func setBackground()
 //}
 
-class HeaderView: UIView {
+open class HeaderView: UIView {
     
     // MARK: - Views
     private lazy var closeButton: UIButton = {
@@ -42,15 +46,15 @@ class HeaderView: UIView {
     // MARK: - Public Properties
     weak var delegate: HeaderViewDelegate?
     
-//    weak var dataSource: HeaderViewDataSource?
+    weak var dataSource: HeaderViewDataSource?
     
     // MARK: - Init
-    init() {
+    public init() {
         super.init(frame: .zero)
         setViewAppearance()
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -96,11 +100,11 @@ class HeaderView: UIView {
     }
     
     private func setSeperatorStyle() {
-        delegate?.setSeperatorStyle(seperatorView)
+        dataSource?.setSeperatorStyle(seperatorView)
     }
     
     private func setCloseButtonStyle() {
-        delegate?.setCloseButtonStyle(closeButton)
+        dataSource?.setCloseButtonStyle(closeButton)
     }
     
     // MARK: - Actions
