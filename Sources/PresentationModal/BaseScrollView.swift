@@ -16,12 +16,9 @@ class BaseScrollView: UIScrollView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.showsVerticalScrollIndicator = false
-        self.showsHorizontalScrollIndicator = false
-        
-        if #available(iOS 11.0, *) {
-            self.contentInsetAdjustmentBehavior = .never
-        }
+        showsVerticalScrollIndicator = false
+        showsHorizontalScrollIndicator = false
+        contentInsetAdjustmentBehavior = .never
     }
     
     required init?(coder aDecoder: NSCoder) {
