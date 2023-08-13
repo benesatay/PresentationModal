@@ -10,18 +10,7 @@ import SnapKit
 
 public protocol HeaderViewDelegate: AnyObject {
     func didBackButtonTapped()
-    func setSeperatorStyle(_ view: UIView)
-    func setCloseButtonStyle(_ button: UIButton)
 }
-
-extension HeaderViewDelegate {
-    func setSeperatorStyle(_ view: UIView) {}
-    func setCloseButtonStyle(_ button: UIButton) {}
-}
-
-//protocol HeaderViewDataSource: AnyObject {
-//    func setBackground()
-//}
 
 open class HeaderView: UIView {
     
@@ -64,12 +53,10 @@ open class HeaderView: UIView {
     // MARK: - Public Methods
     public func setCloseButton() {
         setCloseButtonConstraints()
-        setCloseButtonStyle()
     }
     
     public func setSeperator() {
         setSeperatorContstraints()
-        setSeperatorStyle()
     }
     
     private func setCloseButtonConstraints() {
@@ -93,14 +80,6 @@ open class HeaderView: UIView {
             make.center.equalToSuperview()
             make.top.bottom.equalToSuperview().inset(24)
         })
-    }
-    
-    private func setSeperatorStyle() {
-        delegate?.setSeperatorStyle(seperatorView)
-    }
-    
-    private func setCloseButtonStyle() {
-        delegate?.setCloseButtonStyle(closeButton)
     }
     
     // MARK: - Actions
