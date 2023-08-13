@@ -186,7 +186,7 @@ open class MainView: UIViewController {
     }
     
     // MARK: - Public Methods
-    public func didViewDismissed(completion: @escaping() -> Void) {
+    open func didViewDismissed(completion: @escaping() -> Void) {
         self.dismiss(animated: true) {
             completion()
         }

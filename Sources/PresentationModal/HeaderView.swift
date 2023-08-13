@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-protocol HeaderViewDelegate: AnyObject {
+public protocol HeaderViewDelegate: AnyObject {
     func didBackButtonTapped()
     func setSeperatorStyle(_ view: UIView)
     func setCloseButtonStyle(_ button: UIButton)
