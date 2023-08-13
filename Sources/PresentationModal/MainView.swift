@@ -16,7 +16,7 @@ protocol PresentationModalDelegate: AnyObject {
     
 }
 
-open class MainView: UIViewController {
+open class MainView: UIViewController, HeaderViewDelegate {
     
     // MARK: - Views
     private lazy var scrollView: BaseScrollView = {
@@ -185,18 +185,16 @@ open class MainView: UIViewController {
         }
     }
     
-    // MARK: - Public Methods
+    // MARK: - Open Methods
     open func didViewDismissed(completion: @escaping() -> Void) {
         self.dismiss(animated: true) {
             completion()
         }
     }
     
- 
-}
+    // MARK: - Public Methods
 
-// MARK: - PanModalHeaderViewDelegate
-extension MainView: HeaderViewDelegate {
+    // MARK: - PanModalHeaderViewDelegate
     public func didBackButtonTapped() {
         didViewDismissed {}
     }
