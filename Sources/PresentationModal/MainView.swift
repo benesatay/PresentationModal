@@ -31,7 +31,7 @@ open class MainView: UIViewController {
         return view
     }()
     
-    lazy var headerView: HeaderView = {
+    public lazy var headerView: HeaderView = {
         let view = HeaderView()
         view.delegate = self
         return view
