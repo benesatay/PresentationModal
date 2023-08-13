@@ -7,14 +7,11 @@
 
 import UIKit
 
-extension MainView {
-   public enum PresentationStyle {
-        case normal
-        case custom
-        case fullScreen
-    }
-}
-
+public enum PresentationStyle {
+     case normal
+     case custom
+     case fullScreen
+ }
 protocol PresentationModalDelegate: AnyObject {
     
 }
