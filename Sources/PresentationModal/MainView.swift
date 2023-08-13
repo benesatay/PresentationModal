@@ -192,20 +192,22 @@ open class MainView: UIViewController, HeaderViewDelegate {
         }
     }
     
-    // MARK: - Public Methods
 
     // MARK: - PanModalHeaderViewDelegate
-    public func didBackButtonTapped() {
+    open func didBackButtonTapped() {
         didViewDismissed {}
     }
     
-    public func setSeperatorStyle(_ view: UIView) {
+    open func setSeperatorStyle(_ view: UIView) {
         
     }
     
-    public func setCloseButtonStyle(_ button: UIButton) {
+    open func setCloseButtonStyle(_ button: UIButton) {
         
     }
+    
+    // MARK: - Public Methods
+
 }
 
 // MARK: - UIGestureRecognizerDelegate
