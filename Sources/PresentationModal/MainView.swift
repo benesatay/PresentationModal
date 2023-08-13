@@ -31,7 +31,7 @@ open class MainView: UIViewController, HeaderViewDelegate {
         return view
     }()
     
-    private lazy var headerView: HeaderView = {
+    public lazy var headerView: HeaderView = {
         let view = HeaderView()
         view.delegate = self
         return view
@@ -201,11 +201,11 @@ open class MainView: UIViewController, HeaderViewDelegate {
         dismissView()
     }
     
-    open func setSeperatorStyle(_ view: inout UIView) {
+    open func setSeperatorStyle(_ view: UIView) {
         
     }
     
-    open func setCloseButtonStyle(_ button: inout UIButton) {
+    open func setCloseButtonStyle(_ button: UIButton) {
         
     }
     

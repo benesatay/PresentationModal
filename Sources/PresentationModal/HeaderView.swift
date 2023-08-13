@@ -10,20 +10,20 @@ import SnapKit
 
 public protocol HeaderViewDelegate: AnyObject {
     func didBackButtonTapped()
-    func setSeperatorStyle(_ view: inout UIView)
-    func setCloseButtonStyle(_ button: inout UIButton)
+    func setSeperatorStyle(_ view: UIView)
+    func setCloseButtonStyle(_ button: UIButton)
 }
 
 extension HeaderViewDelegate {
-    func setSeperatorStyle(_ view: inout UIView) {}
-    func setCloseButtonStyle(_ button: inout UIButton) {}
+    func setSeperatorStyle(_ view: UIView) {}
+    func setCloseButtonStyle(_ button: UIButton) {}
 }
 
 //protocol HeaderViewDataSource: AnyObject {
 //    func setBackground()
 //}
 
-class HeaderView: UIView {
+open class HeaderView: UIView {
     
     // MARK: - Views
     public lazy var closeButton: UIButton = {
@@ -32,7 +32,7 @@ class HeaderView: UIView {
         return button
     }()
     
-    private lazy var seperatorView: UIView = {
+    public lazy var seperatorView: UIView = {
         let seperatorView = UIView()
         seperatorView.backgroundColor = .systemGray4
         seperatorView.layer.cornerRadius = 2
@@ -45,12 +45,12 @@ class HeaderView: UIView {
 //    weak var dataSource: HeaderViewDataSource?
     
     // MARK: - Init
-    init() {
+    public init() {
         super.init(frame: .zero)
         setViewAppearance()
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -96,11 +96,11 @@ class HeaderView: UIView {
     }
     
     private func setSeperatorStyle() {
-        delegate?.setSeperatorStyle(&seperatorView)
+        delegate?.setSeperatorStyle(seperatorView)
     }
     
     private func setCloseButtonStyle() {
-        delegate?.setCloseButtonStyle(&closeButton)
+        delegate?.setCloseButtonStyle(closeButton)
     }
     
     // MARK: - Actions
