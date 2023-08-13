@@ -2,7 +2,7 @@ import UIKit
 
 open class PresentationModal: MainView {
     
-    override init(_ presentationStyle: PresentationStyle = .custom) {
+    public override init(_ presentationStyle: PresentationStyle = .custom) {
         super.init(presentationStyle)
     }
     
