@@ -201,11 +201,11 @@ open class MainView: UIViewController, HeaderViewDelegate {
         dismissView()
     }
     
-    open func setSeperatorStyle(_ view: UIView) {
+    open func setSeperatorStyle(_ view: inout UIView) {
         
     }
     
-    open func setCloseButtonStyle(_ button: UIButton) {
+    open func setCloseButtonStyle(_ button: inout UIButton) {
         
     }
     
