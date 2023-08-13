@@ -31,7 +31,7 @@ open class MainView: UIViewController, HeaderViewDelegate {
         return view
     }()
     
-    public lazy var headerView: HeaderView = {
+    private lazy var headerView: HeaderView = {
         let view = HeaderView()
         view.delegate = self
         return view
@@ -199,6 +199,14 @@ open class MainView: UIViewController, HeaderViewDelegate {
     // MARK: - PanModalHeaderViewDelegate
     open func didBackButtonTapped() {
         dismissView()
+    }
+    
+    open func setSeperatorStyle(_ view: UIView) {
+        
+    }
+    
+    open func setCloseButtonStyle(_ button: UIButton) {
+        
     }
     
     // MARK: - Public Methods

@@ -10,18 +10,29 @@ import SnapKit
 
 public protocol HeaderViewDelegate: AnyObject {
     func didBackButtonTapped()
+    func setSeperatorStyle(_ view: UIView)
+    func setCloseButtonStyle(_ button: UIButton)
 }
 
-open class HeaderView: UIView {
+extension HeaderViewDelegate {
+    func setSeperatorStyle(_ view: UIView) {}
+    func setCloseButtonStyle(_ button: UIButton) {}
+}
+
+//protocol HeaderViewDataSource: AnyObject {
+//    func setBackground()
+//}
+
+class HeaderView: UIView {
     
     // MARK: - Views
-    public lazy var closeButton: UIButton = {
+    private lazy var closeButton: UIButton = {
         let button = UIButton()
         button.addTarget(self, action: #selector(didBackButtonTapped), for: .touchUpInside)
         return button
     }()
     
-    public lazy var seperatorView: UIView = {
+    private lazy var seperatorView: UIView = {
         let seperatorView = UIView()
         seperatorView.backgroundColor = .systemGray4
         seperatorView.layer.cornerRadius = 2
@@ -34,12 +45,12 @@ open class HeaderView: UIView {
 //    weak var dataSource: HeaderViewDataSource?
     
     // MARK: - Init
-    public init() {
+    init() {
         super.init(frame: .zero)
         setViewAppearance()
     }
     
-    required public init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -53,10 +64,12 @@ open class HeaderView: UIView {
     // MARK: - Public Methods
     public func setCloseButton() {
         setCloseButtonConstraints()
+        setCloseButtonStyle()
     }
     
     public func setSeperator() {
         setSeperatorContstraints()
+        setSeperatorStyle()
     }
     
     private func setCloseButtonConstraints() {
@@ -80,6 +93,14 @@ open class HeaderView: UIView {
             make.center.equalToSuperview()
             make.top.bottom.equalToSuperview().inset(24)
         })
+    }
+    
+    private func setSeperatorStyle() {
+        delegate?.setSeperatorStyle(seperatorView)
+    }
+    
+    private func setCloseButtonStyle() {
+        delegate?.setCloseButtonStyle(closeButton)
     }
     
     // MARK: - Actions
