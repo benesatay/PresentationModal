@@ -8,10 +8,10 @@
 import UIKit
 
 public enum PresentationStyle {
-     case normal
-     case custom
-     case fullScreen
- }
+    case normal
+    case custom
+    case fullScreen
+}
 protocol PresentationModalDelegate: AnyObject {
     
 }
@@ -51,7 +51,7 @@ open class MainView: UIViewController, HeaderViewDelegate {
     
     // MARK: - Private Properties
     private let screenHeight = UIScreen.main.bounds.height
-
+    
     private var constantOfDismissableHeight: CGFloat {
         return screenHeight/6
     }
@@ -61,7 +61,7 @@ open class MainView: UIViewController, HeaderViewDelegate {
     private var visibleDimmedHeight: CGFloat {
         return isOverFullScreen ? 0 : calculateVisibleDimmedViewHeight()
     }
-  
+    
     private var mainOriginY: CGFloat {
         return view.frame.origin.y
     }
@@ -185,17 +185,20 @@ open class MainView: UIViewController, HeaderViewDelegate {
         }
     }
     
-    // MARK: - Open Methods
-    open func didViewDismissed(completion: @escaping() -> Void) {
+    private func dismissView() {
         self.dismiss(animated: true) {
-            completion()
+            self.didViewDismissed()
         }
     }
     
-
+    // MARK: - Open Methods
+    open func didViewDismissed() {
+        
+    }
+    
     // MARK: - PanModalHeaderViewDelegate
     open func didBackButtonTapped() {
-        didViewDismissed {}
+        dismissView()
     }
     
     open func setSeperatorStyle(_ view: UIView) {
@@ -207,13 +210,13 @@ open class MainView: UIViewController, HeaderViewDelegate {
     }
     
     // MARK: - Public Methods
-
+    
 }
 
 // MARK: - UIGestureRecognizerDelegate
 extension MainView: UIGestureRecognizerDelegate {
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+                                  shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return (scrollView.contentOffset.y == 0)
     }
 }
@@ -234,9 +237,9 @@ extension MainView {
     private func didPanEnded(_ gesture: UIPanGestureRecognizer) {
         let dragVelocity = gesture.velocity(in: view)
         if dragVelocity.y >= 1100 {
-            self.didViewDismissed {}
+            dismissView()
         } else if calculatePannedDistance() <= constantOfDismissableHeight {
-            self.didViewDismissed {}
+            dismissView()
         } else {
             resetOrigin()
         }
@@ -248,7 +251,7 @@ extension MainView {
     
     // MARK: - Actions
     @objc private func didDimmedViewTapped(_ gesture: UITapGestureRecognizer) {
-        didViewDismissed {}
+        dismissView()
     }
     
     @objc private func didViewPanned(_ gesture: UIPanGestureRecognizer) {
