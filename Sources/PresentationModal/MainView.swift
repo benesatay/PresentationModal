@@ -8,7 +8,7 @@
 import UIKit
 
 extension MainView {
-    enum PresentationStyle {
+   public enum PresentationStyle {
         case normal
         case custom
         case fullScreen
@@ -81,7 +81,7 @@ open class MainView: UIViewController {
     private var presentationStyle: PresentationStyle = .custom
     
     // MARK: - Init
-    init(_ presentationStyle: PresentationStyle = .custom) {
+    public init(_ presentationStyle: PresentationStyle = .custom) {
         self.presentationStyle = presentationStyle
         super.init(nibName: nil, bundle: nil)
     }
