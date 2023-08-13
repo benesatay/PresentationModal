@@ -46,7 +46,7 @@ open class HeaderView: UIView {
     // MARK: - Public Properties
     weak var delegate: HeaderViewDelegate?
     
-    weak var dataSource: HeaderViewDataSource?
+    public weak var dataSource: HeaderViewDataSource?
     
     // MARK: - Init
     public init() {
