@@ -82,7 +82,7 @@ open class HeaderView: UIView {
         addSubview(closeButton)
         closeButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(16)
-            make.top.equalToSuperview().inset(safeAreaInsets.top + 16)
+            make.top.equalToSuperview().inset(16)
             make.leading.equalToSuperview().inset(16)
         }
     }
