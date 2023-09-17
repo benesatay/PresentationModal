@@ -253,7 +253,7 @@ extension MainView {
         // Not allowing the user to drag the view upward
         guard translation.y >= 0 else { return }
         let currentPosition = translation.y
-        //        tnLog("*** currentPosition *** \(currentPosition)")
+        print("*** currentPosition *** \(currentPosition)")
         switch gesture.state {
         case .changed:
             view.frame.origin = CGPoint(x: 0, y: originPoint.y + currentPosition)
