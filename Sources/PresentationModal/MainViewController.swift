@@ -16,7 +16,7 @@ protocol PresentationModalDelegate: AnyObject {
     
 }
 
-open class MainView: UIViewController {
+open class MainViewController: UIViewController {
     
     // MARK: - Views
     private lazy var scrollView: BaseScrollView = {
@@ -191,32 +191,71 @@ open class MainView: UIViewController {
         }
     }
     
-    // MARK: - Open Methods
-    open func didViewDismissed() {
+    // MARK: - Content View
+    private func makeScrollableContentViewConstraints() {
+        contentView.snp.removeConstraints()
+        scrollView.addSubview(contentView)
+        contentView.snp.makeConstraints { (make) in
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.left.right.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.height.greaterThanOrEqualToSuperview()
+        }
+    }
+    
+    private func setCustomStyleContentViewConstraints() {
+        view.addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(0)
+            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+        }
         
+        setCustomStyleHeaderView()
+        
+        DispatchQueue.main.async {
+            self.originPoint = self.contentView.frame.origin
+        }
     }
     
-    // MARK: - Public Methods
     
-}
-
-// MARK: - HeaderViewDelegate
-extension MainView: HeaderViewDelegate {
-    public func didBackButtonTapped() {
-        dismissView()
+    private func setContentViewBackgroundColor() {
+        contentView.backgroundColor = (presentationStyle == .fullScreen)
+        ? .clear
+        : .white
     }
-}
-
-// MARK: - UIGestureRecognizerDelegate
-extension MainView: UIGestureRecognizerDelegate {
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                                  shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return (scrollView.contentOffset.y == 0)
+    
+    // MARK: - Header View
+    private func setHeaderViewBackgroundColor() {
+        headerView.backgroundColor = (presentationStyle == .fullScreen)
+        ? view.backgroundColor
+        : contentView.backgroundColor
     }
-}
-
-// MARK: - Gestures
-extension MainView {
+    
+    private func setCustomStyleHeaderView() {
+        view.addSubview(headerView)
+        headerView.snp.makeConstraints { make in
+            make.bottom.equalTo(contentView.snp.top)
+            make.leading.trailing.equalToSuperview()
+        }
+    }
+    
+    private func setScrollableStyleHeaderView() {
+        headerView.snp.removeConstraints()
+        headerView.snp.makeConstraints { make in
+            switch presentationStyle {
+            case .custom, .fullScreen:
+                make.top.equalToSuperview()
+            case .normal:
+                make.top.equalToSuperview().inset(view.safeAreaInsets.top)
+            }
+            make.leading.trailing.equalToSuperview()
+        }
+    }
+    
+    // MARK: - Gestures
+    
     private func addPanGesture() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didViewPanned(_:)))
         panGesture.delegate = self
@@ -253,11 +292,11 @@ extension MainView {
         // Not allowing the user to drag the view upward
         guard translation.y >= 0 else { return }
         let currentPosition = translation.y
-        print("*** currentPosition *** \(currentPosition)")
+        //        print("*** currentPosition *** \(currentPosition)")
         switch gesture.state {
         case .changed:
-            var offsetY = originPoint.y + currentPosition
-            if offsetY < view.safeAreaInsets.top {
+            let offsetY = originPoint.y + currentPosition
+            if offsetY <= view.safeAreaInsets.top {
                 didPanEnded(gesture)
             } else {
                 view.frame.origin = CGPoint(x: 0, y: offsetY)
@@ -268,59 +307,27 @@ extension MainView {
             break
         }
     }
-}
-
-// MARK: - Content View
-extension MainView {
-    private func makeScrollableContentViewConstraints() {
-        contentView.snp.removeConstraints()
-        scrollView.addSubview(contentView)
-        contentView.snp.makeConstraints { (make) in
-            make.top.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.left.right.equalToSuperview()
-            make.centerX.equalToSuperview()
-            make.height.greaterThanOrEqualToSuperview()
-        }
+    
+    // MARK: - Open Methods
+    open func didViewDismissed() {
+        
     }
     
-    private func setCustomStyleContentViewConstraints() {
-        contentView.backgroundColor = presentationStyle == .fullScreen ? .clear : .white
-        view.addSubview(contentView)
-        contentView.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(0)
-            make.bottom.equalToSuperview()
-            make.leading.trailing.equalToSuperview()
-        }
-        
-        setCustomStyleHeaderView()
-        
-        DispatchQueue.main.async {
-            self.originPoint = self.contentView.frame.origin
-        }
+    // MARK: - Public Methods
+    
+}
+
+// MARK: - HeaderViewDelegate
+extension MainViewController: HeaderViewDelegate {
+    public func didBackButtonTapped() {
+        dismissView()
     }
 }
 
-// MARK: - Header View
-extension MainView {
-    private func setCustomStyleHeaderView() {
-        view.addSubview(headerView)
-        headerView.snp.makeConstraints { make in
-            make.bottom.equalTo(contentView.snp.top)
-            make.leading.trailing.equalToSuperview()
-        }
-    }
-    
-    private func setScrollableStyleHeaderView() {
-        headerView.snp.removeConstraints()
-        headerView.snp.makeConstraints { make in
-            switch presentationStyle {
-            case .custom, .fullScreen:
-                make.top.equalToSuperview()
-            case .normal:
-                make.top.equalToSuperview().inset(view.safeAreaInsets.top)
-            }
-            make.leading.trailing.equalToSuperview()
-        }
+// MARK: - UIGestureRecognizerDelegate
+extension MainViewController: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                                  shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return (scrollView.contentOffset.y == 0)
     }
 }
