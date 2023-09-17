@@ -256,7 +256,11 @@ extension MainView {
         print("*** currentPosition *** \(currentPosition)")
         switch gesture.state {
         case .changed:
-            view.frame.origin = CGPoint(x: 0, y: originPoint.y + currentPosition)
+            var offsetY = originPoint.y + currentPosition
+            if offsetY < view.safeAreaInsets.top {
+                offsetY = 0
+            }
+            view.frame.origin = CGPoint(x: 0, y: offsetY)
         case .ended:
             didPanEnded(gesture)
         default:
