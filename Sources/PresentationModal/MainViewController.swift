@@ -12,6 +12,7 @@ public enum PresentationStyle {
     case custom
     case fullScreen
 }
+
 protocol PresentationModalDelegate: AnyObject {
     
 }
@@ -59,14 +60,14 @@ open class MainViewController: UIViewController {
     private var originPoint: CGPoint = .zero
     
     private var visibleDimmedHeight: CGFloat {
-        return isOverFullScreen ? 0 : calculateVisibleDimmedViewHeight()
+        return isContentOverFullScreen ? 0 : calculateVisibleDimmedViewHeight()
     }
     
     private var mainOriginY: CGFloat {
         return view.frame.origin.y
     }
     
-    private var isOverFullScreen: Bool {
+    private var isContentOverFullScreen: Bool {
         switch presentationStyle {
         case .custom:
             return isContentHeightOverScreen()
@@ -92,7 +93,8 @@ open class MainViewController: UIViewController {
         super.viewDidLoad()
         addPanGesture()
         addDimmedView()
-        setCustomStyleContentViewConstraints()
+        addHeaderView()
+        makeConstraintsOfNoneScrollableContent()
     }
     
     open override func viewDidLayoutSubviews() {
@@ -113,6 +115,10 @@ open class MainViewController: UIViewController {
         window.addSubview(dimmedView)
     }
     
+    private func addHeaderView() {
+        view.addSubview(headerView)
+    }
+    
     private func calculateVisibleDimmedViewHeight() -> CGFloat {
         return view.frame.height - contentView.frame.height
     }
@@ -125,56 +131,95 @@ open class MainViewController: UIViewController {
     
     // MARK: - Styles
     private func setStyle() {
-        if isOverFullScreen {
-            addScroll()
-            switch presentationStyle {
-            case .normal:
-                setNormalStyle()
-            case .custom:
-                setOverFullScreenCustomStyle()
-            case .fullScreen:
-                setFullScreenStyle()
-            }
-        } else {
-            setUnderFullScreenCustomStyle()
+        switch presentationStyle {
+        case .normal:
+            break
+        case .custom:
+            isContentOverFullScreen
+            ? makeConstraintsOfScrollableContent()
+            : addTapGestureToDimmedView()
+        case .fullScreen:
+            setFullScreenStyle()
+        }
+        
+        setHeaderViewStyle()
+        setBackgroundColor()
+        setDimmedViewBackgroundColor()
+    }
+    
+    private func setHeaderViewStyle() {
+        switch presentationStyle {
+        case .normal:
+            headerView.setSeperator()
+        case .custom:
+            isContentOverFullScreen ? headerView.setCloseButton() : headerView.setSeperator()
+        case.fullScreen:
+            headerView.setCloseButton()
         }
     }
     
-    private func setNormalStyle() {
-        headerView.setSeperator()
+    private func setBackgroundColor() {
+        let color: UIColor = .white
+        let bgColor: UIColor = isContentOverFullScreen ? color : .clear
+        view.backgroundColor = bgColor
+        contentView.backgroundColor = color
+        headerView.backgroundColor = color
     }
     
-    private func setOverFullScreenCustomStyle() {
-        headerView.setCloseButton()
-        view.backgroundColor = .white
-        dimmedView.backgroundColor = .clear
-    }
-    
-    private func setUnderFullScreenCustomStyle() {
-        addTapGesture()
-        headerView.setSeperator()
+    private func setDimmedViewBackgroundColor() {
+        dimmedView.backgroundColor = isContentOverFullScreen ? .clear : dimmedView.backgroundColor
     }
     
     private func setFullScreenStyle() {
-        headerView.setCloseButton()
         view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
     }
     
-    private func addScroll() {
-        setScrollableStyleHeaderView()
-        makeScrollViewConstraints()
-        makeScrollableContentViewConstraints()
-    }
-    
-    private func makeScrollViewConstraints() {
+    // MARK: - Make Constraints
+    private func makeConstraintsOfScrollableContent() {
+        let topInset = (presentationStyle == .normal) ? view.safeAreaInsets.top : 0
+        headerView.snp.removeConstraints()
+        headerView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalToSuperview().inset(topInset)
+        }
+        
         scrollView.bounces = false
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints { (make) in
             make.top.equalTo(headerView.snp.bottom)
-            make.left.right.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview()
+        }
+        
+        contentView.snp.removeConstraints()
+        contentView.removeFromSuperview()
+        scrollView.addSubview(contentView)
+        contentView.snp.makeConstraints { (make) in
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.height.greaterThanOrEqualToSuperview()
+        }
+    }
+    
+    private func makeConstraintsOfNoneScrollableContent() {
+        view.addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(0)
+            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        headerView.snp.makeConstraints { make in
+            make.bottom.equalTo(contentView.snp.top)
+            make.leading.trailing.equalToSuperview()
+        }
+                
+        DispatchQueue.main.async {
+            self.originPoint = self.contentView.frame.origin
         }
     }
     
@@ -191,78 +236,14 @@ open class MainViewController: UIViewController {
         }
     }
     
-    // MARK: - Content View
-    private func makeScrollableContentViewConstraints() {
-        contentView.snp.removeConstraints()
-        scrollView.addSubview(contentView)
-        contentView.snp.makeConstraints { (make) in
-            make.top.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.left.right.equalToSuperview()
-            make.centerX.equalToSuperview()
-            make.height.greaterThanOrEqualToSuperview()
-        }
-    }
-    
-    private func setCustomStyleContentViewConstraints() {
-        view.addSubview(contentView)
-        contentView.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(0)
-            make.bottom.equalToSuperview()
-            make.leading.trailing.equalToSuperview()
-        }
-        
-        setCustomStyleHeaderView()
-        
-        DispatchQueue.main.async {
-            self.originPoint = self.contentView.frame.origin
-        }
-    }
-    
-    
-    private func setContentViewBackgroundColor() {
-        contentView.backgroundColor = (presentationStyle == .fullScreen)
-        ? .clear
-        : .white
-    }
-    
-    // MARK: - Header View
-    private func setHeaderViewBackgroundColor() {
-        headerView.backgroundColor = (presentationStyle == .fullScreen)
-        ? view.backgroundColor
-        : contentView.backgroundColor
-    }
-    
-    private func setCustomStyleHeaderView() {
-        view.addSubview(headerView)
-        headerView.snp.makeConstraints { make in
-            make.bottom.equalTo(contentView.snp.top)
-            make.leading.trailing.equalToSuperview()
-        }
-    }
-    
-    private func setScrollableStyleHeaderView() {
-        headerView.snp.removeConstraints()
-        headerView.snp.makeConstraints { make in
-            switch presentationStyle {
-            case .custom, .fullScreen:
-                make.top.equalToSuperview()
-            case .normal:
-                make.top.equalToSuperview().inset(view.safeAreaInsets.top)
-            }
-            make.leading.trailing.equalToSuperview()
-        }
-    }
-    
     // MARK: - Gestures
-    
     private func addPanGesture() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didViewPanned(_:)))
         panGesture.delegate = self
         view.addGestureRecognizer(panGesture)
     }
     
-    private func addTapGesture() {
+    private func addTapGestureToDimmedView() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didDimmedViewTapped))
         dimmedView.addGestureRecognizer(tapGesture)
     }
@@ -314,7 +295,6 @@ open class MainViewController: UIViewController {
     }
     
     // MARK: - Public Methods
-    
 }
 
 // MARK: - HeaderViewDelegate

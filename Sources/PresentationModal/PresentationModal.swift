@@ -1,6 +1,6 @@
 import UIKit
 
-open class PresentationModal: MainView {
+open class PresentationModal: MainViewController {
     
     public override init(_ presentationStyle: PresentationStyle = .custom) {
         super.init(presentationStyle)
