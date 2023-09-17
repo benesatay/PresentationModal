@@ -258,9 +258,10 @@ extension MainView {
         case .changed:
             var offsetY = originPoint.y + currentPosition
             if offsetY < view.safeAreaInsets.top {
-                offsetY = 0
+                didPanEnded(gesture)
+            } else {
+                view.frame.origin = CGPoint(x: 0, y: offsetY)
             }
-            view.frame.origin = CGPoint(x: 0, y: offsetY)
         case .ended:
             didPanEnded(gesture)
         default:
