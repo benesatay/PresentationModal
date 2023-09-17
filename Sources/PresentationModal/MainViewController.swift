@@ -273,6 +273,8 @@ open class MainViewController: UIViewController {
         // Not allowing the user to drag the view upward
         guard translation.y >= 0 else { return }
         let currentPosition = translation.y
+        print("view.safeAreaInsets.top \(view.safeAreaInsets.top)")
+        print("*** originPoint.y *** \(originPoint.y)")
         print("*** currentPosition *** \(currentPosition)")
         switch gesture.state {
         case .changed:
