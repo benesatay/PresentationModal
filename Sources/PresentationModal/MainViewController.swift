@@ -276,7 +276,8 @@ open class MainViewController: UIViewController {
         switch gesture.state {
         case .changed:
             let offsetY = originPoint.y + currentPosition
-            if offsetY <= view.safeAreaInsets.top {
+            if presentationStyle == .fullScreen,
+               offsetY <= view.safeAreaInsets.top {
                 didPanEnded(gesture)
             } else {
                 view.frame.origin = CGPoint(x: 0, y: offsetY)
