@@ -248,7 +248,10 @@ open class MainViewController: UIViewController {
     @objc private func didViewPanned(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view)
         // Not allowing the user to drag the view upward
-        guard translation.y >= 0 else { return }
+        guard translation.y >= 0 else {
+            didPanEnded(gesture)
+            return
+        }
         let currentPosition = translation.y
         print("*** Helper.shared.safeAreaInsets.top *** \(Helper.shared.safeAreaInsets.top)")
         print("*** originPoint.y *** \(originPoint.y)")
