@@ -206,7 +206,7 @@ open class MainViewController: UIViewController {
     /// Set back to original position of the view controller
     private func resetOrigin() {
         UIView.animate(withDuration: 0.3) {
-            self.contentView.frame.origin = self.originPoint
+            self.view.frame.origin = self.originPoint
         }
     }
     
@@ -252,7 +252,9 @@ open class MainViewController: UIViewController {
         let translation = gesture.translation(in: view)
         // Not allowing the user to drag the view upward
         guard translation.y >= 0 else {
-            didPanEnded(gesture)
+            if originPoint.y != contentView.frame.origin.y {
+                didPanEnded(gesture)
+            }
             return
         }
         let currentPosition = translation.y
