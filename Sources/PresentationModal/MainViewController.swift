@@ -260,7 +260,7 @@ open class MainViewController: UIViewController {
                offsetY <= Helper.shared.safeAreaInsets.top {
                 didPanEnded(gesture)
             } else {
-                view.frame.origin = CGPoint(x: 0, y: offsetY)
+                contentView.frame.origin = CGPoint(x: 0, y: offsetY)
             }
         case .ended:
             didPanEnded(gesture)
