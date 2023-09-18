@@ -207,6 +207,7 @@ open class MainViewController: UIViewController {
     private func resetOrigin() {
         UIView.animate(withDuration: 0.3) {
             self.contentView.frame.origin = self.originPoint
+            self.headerView.frame.origin = self.originPoint
         }
     }
     
@@ -269,6 +270,7 @@ open class MainViewController: UIViewController {
                 didPanEnded(gesture)
             } else {
                 contentView.frame.origin = CGPoint(x: 0, y: offsetY)
+                headerView.frame.origin = CGPoint(x: 0, y: offsetY)
             }
         case .ended:
             didPanEnded(gesture)
