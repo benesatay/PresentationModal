@@ -86,7 +86,6 @@ open class MainViewController: UIViewController {
     // MARK: - Lifecycle
     open override func viewDidLoad() {
         super.viewDidLoad()
-        modalPresentationStyle = .overFullScreen
         addPanGesture()
         addDimmedView()
         addHeaderView()
