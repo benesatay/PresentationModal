@@ -308,12 +308,12 @@ open class MainViewController: UIViewController {
         
     }
     
-    func panLogger(_ translation: CGPoint?,
-                   _ contentViewOrigin: CGPoint?,
-                   _ safeAreaInsets: UIEdgeInsets?,
-                   _ pannedDistance: CGFloat?,
-                   _ dismissableHeight: CGFloat?,
-                   _ dragVelocity: CGPoint?) {
+    open func panLogger(_ translation: CGPoint?,
+                        _ contentViewOrigin: CGPoint?,
+                        _ safeAreaInsets: UIEdgeInsets?,
+                        _ pannedDistance: CGFloat?,
+                        _ dismissableHeight: CGFloat?,
+                        _ dragVelocity: CGPoint?) {
         
     }
     
