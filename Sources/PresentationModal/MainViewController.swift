@@ -231,6 +231,9 @@ open class MainViewController: UIViewController {
     private func didPanEnded(_ gesture: UIPanGestureRecognizer) {
         let pannedDistance = Helper.shared.calculatePannedDistance(mainOriginY, visibleDimmedHeight)
         let dragVelocity = gesture.velocity(in: view)
+        print("*** pannedDistance \(pannedDistance)")
+        print("*** constantOfDismissableHeight \(Helper.shared.constantOfDismissableHeight)")
+        print("*** dragVelocity \(dragVelocity.y)")
         if dragVelocity.y >= 1100 {
             dismissView()
         } else if pannedDistance <= Helper.shared.constantOfDismissableHeight {
