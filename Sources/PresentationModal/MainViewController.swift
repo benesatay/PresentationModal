@@ -85,16 +85,16 @@ open class MainViewController: UIViewController {
     open override func viewDidLoad() {
         super.viewDidLoad()
         addPanGesture()
-        addDimmedView()
-        addHeaderView()
+        addViews()
         makeConstraintsOfNoneScrollableContent()
+        DispatchQueue.main.async {
+            self.holdInitialOrigins()
+        }
     }
     
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if Helper.shared.isContentHeightOverScreen(contentView.frame.height) {
-            presentationStyle = .fullScreen
-        }
+        updatePresentationStyleByContentHeight()
         setStyle()
     }
     
@@ -107,16 +107,24 @@ open class MainViewController: UIViewController {
     
     
     // MARK: - Private Methods
+    private func addViews() {
+        view.addSubview(contentView)
+        view.addSubview(headerView)
+        addDimmedView()
+    }
+    
     private func addDimmedView() {
         guard let window = Helper.shared.window else { return }
         window.addSubview(dimmedView)
     }
     
-    private func addHeaderView() {
-        view.addSubview(headerView)
+    // MARK: - Styles
+    private func updatePresentationStyleByContentHeight() {
+        if Helper.shared.isContentHeightOverScreen(contentView.frame.height) {
+            presentationStyle = .fullScreen
+        }
     }
     
-    // MARK: - Styles
     private func setStyle() {
         switch presentationStyle {
         case .normal:
@@ -183,9 +191,8 @@ open class MainViewController: UIViewController {
             make.height.greaterThanOrEqualToSuperview()
         }
     }
-    
+ 
     private func makeConstraintsOfNoneScrollableContent() {
-        view.addSubview(contentView)
         contentView.snp.makeConstraints { make in
             make.height.greaterThanOrEqualTo(0)
             make.bottom.equalToSuperview()
@@ -196,18 +203,23 @@ open class MainViewController: UIViewController {
             make.bottom.equalTo(contentView.snp.top)
             make.leading.trailing.equalToSuperview()
         }
-                
-        DispatchQueue.main.async {
-            self.contentViewOrigin = self.contentView.frame.origin
-            self.headerViewOrigin = self.headerView.frame.origin
-        }
+    }
+    
+    private func holdInitialOrigins() {
+        contentViewOrigin = contentView.frame.origin
+        headerViewOrigin = headerView.frame.origin
+    }
+    
+    private func updateOrigin(contentViewOrigin: CGPoint, headerViewOrigin: CGPoint) {
+        contentView.frame.origin = contentViewOrigin
+        headerView.frame.origin = headerViewOrigin
     }
     
     /// Set back to original position of the view controller
     private func resetOrigin() {
         UIView.animate(withDuration: 0.3) {
-            self.contentView.frame.origin = self.contentViewOrigin
-            self.headerView.frame.origin = self.headerViewOrigin
+            self.updateOrigin(contentViewOrigin: self.contentViewOrigin,
+                              headerViewOrigin: self.headerViewOrigin)
         }
     }
     
@@ -255,8 +267,8 @@ open class MainViewController: UIViewController {
                 didPanEnded(gesture)
             } else {
                 let headerOffsetY = headerViewOrigin.y + currentPosition
-                contentView.frame.origin = CGPoint(x: 0, y: offsetY)
-                headerView.frame.origin = CGPoint(x: 0, y: headerOffsetY)
+                updateOrigin(contentViewOrigin: CGPoint(x: 0, y: offsetY),
+                             headerViewOrigin: CGPoint(x: 0, y: headerOffsetY))
             }
         case .ended:
             didPanEnded(gesture)
