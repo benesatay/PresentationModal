@@ -43,9 +43,12 @@ open class HeaderView: UIView {
         return seperatorView
     }()
     
-    // MARK: - Public Properties
+    // MARK: - Internal Properties
+    var statusBarHeight: CGFloat = 0
+
     weak var delegate: HeaderViewDelegate?
-    
+        
+    // MARK: - Public Properties
     public weak var dataSource: HeaderViewDataSource?
     
     // MARK: - Init
@@ -82,7 +85,7 @@ open class HeaderView: UIView {
         addSubview(closeButton)
         closeButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(16)
-            make.top.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(statusBarHeight + 16)
             make.leading.equalToSuperview().inset(16)
         }
     }

@@ -35,6 +35,7 @@ open class MainViewController: UIViewController {
     public lazy var headerView: HeaderView = {
         let view = HeaderView()
         view.delegate = self
+        view.statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
         return view
     }()
     
@@ -60,20 +61,11 @@ open class MainViewController: UIViewController {
     private var originPoint: CGPoint = .zero
     
     private var visibleDimmedHeight: CGFloat {
-        return isContentOverFullScreen ? 0 : calculateVisibleDimmedViewHeight()
+        return (presentationStyle == .fullScreen) ? 0 : calculateVisibleDimmedViewHeight()
     }
     
     private var mainOriginY: CGFloat {
         return view.frame.origin.y
-    }
-    
-    private var isContentOverFullScreen: Bool {
-        switch presentationStyle {
-        case .custom:
-            return isContentHeightOverScreen()
-        case .normal, .fullScreen:
-            return true
-        }
     }
     
     private var presentationStyle: PresentationStyle = .custom
@@ -99,6 +91,9 @@ open class MainViewController: UIViewController {
     
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        if isContentHeightOverScreen() {
+            presentationStyle = .fullScreen
+        }
         setStyle()
     }
     
@@ -109,9 +104,11 @@ open class MainViewController: UIViewController {
         }
     }
     
+    private let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first
+    
     // MARK: - Private Methods
     private func addDimmedView() {
-        guard let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first else { return }
+        guard let window else { return }
         window.addSubview(dimmedView)
     }
     
@@ -133,12 +130,11 @@ open class MainViewController: UIViewController {
     private func setStyle() {
         switch presentationStyle {
         case .normal:
-            break
+            makeConstraintsOfScrollableContent()
         case .custom:
-            isContentOverFullScreen
-            ? makeConstraintsOfScrollableContent()
-            : addTapGestureToDimmedView()
+            addTapGestureToDimmedView()
         case .fullScreen:
+            makeConstraintsOfScrollableContent()
             setFullScreenStyle()
         }
         
@@ -152,7 +148,7 @@ open class MainViewController: UIViewController {
         case .normal:
             headerView.setSeperator()
         case .custom:
-            isContentOverFullScreen ? headerView.setCloseButton() : headerView.setSeperator()
+            headerView.setSeperator()
         case.fullScreen:
             headerView.setCloseButton()
         }
@@ -160,14 +156,13 @@ open class MainViewController: UIViewController {
     
     private func setBackgroundColor() {
         let color: UIColor = .white
-        let bgColor: UIColor = isContentOverFullScreen ? color : .clear
-        view.backgroundColor = bgColor
+        view.backgroundColor = (presentationStyle == .fullScreen) ? color : .clear
         contentView.backgroundColor = color
         headerView.backgroundColor = color
     }
     
     private func setDimmedViewBackgroundColor() {
-        dimmedView.backgroundColor = isContentOverFullScreen ? .clear : dimmedView.backgroundColor
+        dimmedView.backgroundColor = (presentationStyle == .fullScreen) ? .clear : dimmedView.backgroundColor
     }
     
     private func setFullScreenStyle() {
