@@ -206,7 +206,7 @@ open class MainViewController: UIViewController {
     /// Set back to original position of the view controller
     private func resetOrigin() {
         UIView.animate(withDuration: 0.3) {
-            self.view.frame.origin = self.originPoint
+            self.contentView.frame.origin = self.originPoint
         }
     }
     
@@ -268,7 +268,7 @@ open class MainViewController: UIViewController {
                offsetY <= Helper.shared.safeAreaInsets.top {
                 didPanEnded(gesture)
             } else {
-                view.frame.origin = CGPoint(x: 0, y: offsetY)
+                contentView.frame.origin = CGPoint(x: 0, y: offsetY)
             }
         case .ended:
             didPanEnded(gesture)
