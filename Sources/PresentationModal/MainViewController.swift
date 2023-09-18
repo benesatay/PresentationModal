@@ -14,12 +14,7 @@ public enum PresentationStyle {
 }
 
 protocol PresentationModalDelegate: AnyObject {
-    func panLogger(_ translation: CGPoint?,
-                   _ contentViewOrigin: CGPoint?,
-                   _ safeAreaInsets: UIEdgeInsets?,
-                   _ pannedDistance: CGFloat?,
-                   _ dismissableHeight: CGFloat?,
-                   _ dragVelocity: CGPoint?)
+    
 }
 
 open class MainViewController: UIViewController {
@@ -57,12 +52,12 @@ open class MainViewController: UIViewController {
     weak var delegate: PresentationModalDelegate?
     
     // MARK: - Public Properties
-
+    
     // MARK: - Private Properties
     
     private var contentViewOrigin: CGPoint = .zero
     private var headerViewOrigin: CGPoint = .zero
-
+    
     private var visibleDimmedHeight: CGFloat {
         let visibleDimmedHeight = Helper.shared.calculateVisibleDimmedViewHeight(view.frame.height,
                                                                                  contentView.frame.height)
@@ -161,7 +156,7 @@ open class MainViewController: UIViewController {
     private func setDimmedViewBackgroundColor() {
         dimmedView.backgroundColor = (presentationStyle == .fullScreen) ? .clear : dimmedView.backgroundColor
     }
- 
+    
     // MARK: - Make Constraints
     private func makeConstraintsOfScrollableContent() {
         let topInset = (presentationStyle == .normal) ? Helper.shared.safeAreaInsets.top : 0
@@ -191,7 +186,7 @@ open class MainViewController: UIViewController {
             make.height.greaterThanOrEqualToSuperview()
         }
     }
- 
+    
     private func makeConstraintsOfNoneScrollableContent() {
         contentView.snp.makeConstraints { make in
             make.height.greaterThanOrEqualTo(0)
@@ -245,10 +240,10 @@ open class MainViewController: UIViewController {
         let pannedDistance = Helper.shared.calculatePannedDistance(view.frame.origin.y,
                                                                    visibleDimmedHeight)
         let dragVelocity = gesture.velocity(in: view)
-        delegate?.panLogger(nil, nil, nil,
-                            pannedDistance,
-                            Helper.shared.constantOfDismissableHeight,
-                            dragVelocity)
+        panLogger(nil, nil, nil,
+                  pannedDistance,
+                  Helper.shared.constantOfDismissableHeight,
+                  dragVelocity)
         if dragVelocity.y >= 1100 {
             dismissView()
         } else if pannedDistance <= Helper.shared.constantOfDismissableHeight {
@@ -292,10 +287,10 @@ open class MainViewController: UIViewController {
     
     @objc private func didViewPanned(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view)
-        delegate?.panLogger(translation,
-                            contentViewOrigin,
-                            Helper.shared.safeAreaInsets,
-                            nil, nil, nil)
+        panLogger(translation,
+                  contentViewOrigin,
+                  Helper.shared.safeAreaInsets,
+                  nil, nil, nil)
         let currentPosition = translation.y
         // Not allowing the user to drag the view upward
         guard isInsideContentViewBounds(currentPosition) else {
@@ -306,10 +301,19 @@ open class MainViewController: UIViewController {
         }
         handleOrigin(by: gesture, and: currentPosition)
     }
-  
-  
+    
+    
     // MARK: - Open Methods
     open func didViewDismissed() {
+        
+    }
+    
+    func panLogger(_ translation: CGPoint?,
+                   _ contentViewOrigin: CGPoint?,
+                   _ safeAreaInsets: UIEdgeInsets?,
+                   _ pannedDistance: CGFloat?,
+                   _ dismissableHeight: CGFloat?,
+                   _ dragVelocity: CGPoint?) {
         
     }
     
