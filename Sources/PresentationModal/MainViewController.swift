@@ -35,7 +35,7 @@ open class MainViewController: UIViewController {
     public lazy var headerView: HeaderView = {
         let view = HeaderView()
         view.delegate = self
-        view.statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+        view.statusBarHeight = Helper.shared.statusBarFrame.height
         return view
     }()
     
@@ -48,23 +48,16 @@ open class MainViewController: UIViewController {
         return view
     }()
     
-
     // MARK: - Internal Properties
     weak var delegate: PresentationModalDelegate?
     
     // MARK: - Private Properties
-    private let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first
-
-    private let screenHeight = UIScreen.main.bounds.height
-    
-    private var constantOfDismissableHeight: CGFloat {
-        return screenHeight/6
-    }
     
     private var originPoint: CGPoint = .zero
     
     private var visibleDimmedHeight: CGFloat {
-        return (presentationStyle == .fullScreen) ? 0 : calculateVisibleDimmedViewHeight()
+        let visibleDimmedHeight = Helper.shared.calculateVisibleDimmedViewHeight(view.frame.height, contentView.frame.height)
+        return (presentationStyle == .fullScreen) ? 0 : visibleDimmedHeight
     }
     
     private var mainOriginY: CGFloat {
@@ -94,7 +87,7 @@ open class MainViewController: UIViewController {
     
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if isContentHeightOverScreen() {
+        if Helper.shared.isContentHeightOverScreen(contentView.frame.height) {
             presentationStyle = .fullScreen
         }
         setStyle()
@@ -110,22 +103,12 @@ open class MainViewController: UIViewController {
     
     // MARK: - Private Methods
     private func addDimmedView() {
-        guard let window else { return }
+        guard let window = Helper.shared.window else { return }
         window.addSubview(dimmedView)
     }
     
     private func addHeaderView() {
         view.addSubview(headerView)
-    }
-    
-    private func calculateVisibleDimmedViewHeight() -> CGFloat {
-        return view.frame.height - contentView.frame.height
-    }
-    
-    private func isContentHeightOverScreen() -> Bool {
-        let totalSafeAreaInset = view.safeAreaInsets.top + view .safeAreaInsets.bottom
-        let safeHeight = screenHeight - totalSafeAreaInset
-        return contentView.frame.height >= safeHeight
     }
     
     // MARK: - Styles
@@ -246,18 +229,15 @@ open class MainViewController: UIViewController {
     }
     
     private func didPanEnded(_ gesture: UIPanGestureRecognizer) {
+        let pannedDistance = Helper.shared.calculatePannedDistance(mainOriginY, visibleDimmedHeight)
         let dragVelocity = gesture.velocity(in: view)
         if dragVelocity.y >= 1100 {
             dismissView()
-        } else if calculatePannedDistance() <= constantOfDismissableHeight {
+        } else if pannedDistance <= Helper.shared.constantOfDismissableHeight {
             dismissView()
         } else {
             resetOrigin()
         }
-    }
-    
-    private func calculatePannedDistance() -> CGFloat {
-        return screenHeight - (mainOriginY + visibleDimmedHeight)
     }
     
     // MARK: - Actions
