@@ -157,7 +157,7 @@ open class MainViewController: UIViewController {
  
     // MARK: - Make Constraints
     private func makeConstraintsOfScrollableContent() {
-        let topInset = (presentationStyle == .normal) ? view.safeAreaInsets.top : 0
+        let topInset = (presentationStyle == .normal) ? Helper.shared.safeAreaInsets.top : 0
         headerView.snp.removeConstraints()
         headerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
@@ -250,14 +250,14 @@ open class MainViewController: UIViewController {
         // Not allowing the user to drag the view upward
         guard translation.y >= 0 else { return }
         let currentPosition = translation.y
-        print("view.safeAreaInsets.top \(view.safeAreaInsets.top)")
+        print("*** Helper.shared.safeAreaInsets.top *** \(Helper.shared.safeAreaInsets.top)")
         print("*** originPoint.y *** \(originPoint.y)")
         print("*** currentPosition *** \(currentPosition)")
         switch gesture.state {
         case .changed:
             let offsetY = originPoint.y + currentPosition
             if presentationStyle == .fullScreen,
-               offsetY <= view.safeAreaInsets.top {
+               offsetY <= Helper.shared.safeAreaInsets.top {
                 didPanEnded(gesture)
             } else {
                 view.frame.origin = CGPoint(x: 0, y: offsetY)
