@@ -206,7 +206,7 @@ open class MainViewController: UIViewController {
     /// Set back to original position of the view controller
     private func resetOrigin() {
         UIView.animate(withDuration: 0.3) {
-            self.view.frame.origin = self.originPoint
+            self.contentView.frame.origin = self.originPoint
         }
     }
     
