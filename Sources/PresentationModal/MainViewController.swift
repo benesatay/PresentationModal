@@ -48,10 +48,13 @@ open class MainViewController: UIViewController {
         return view
     }()
     
-    // MARK: - Public Properties
+
+    // MARK: - Internal Properties
     weak var delegate: PresentationModalDelegate?
     
     // MARK: - Private Properties
+    private let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first
+
     private let screenHeight = UIScreen.main.bounds.height
     
     private var constantOfDismissableHeight: CGFloat {
@@ -104,7 +107,6 @@ open class MainViewController: UIViewController {
         }
     }
     
-    private let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first
     
     // MARK: - Private Methods
     private func addDimmedView() {
@@ -130,12 +132,17 @@ open class MainViewController: UIViewController {
     private func setStyle() {
         switch presentationStyle {
         case .normal:
+            view.layer.cornerRadius = 20
+            view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            view.layer.masksToBounds = true
             makeConstraintsOfScrollableContent()
         case .custom:
             addTapGestureToDimmedView()
+            view.layer.cornerRadius = 20
+            view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            view.layer.masksToBounds = true
         case .fullScreen:
             makeConstraintsOfScrollableContent()
-            setFullScreenStyle()
         }
         
         setHeaderViewStyle()
@@ -164,12 +171,7 @@ open class MainViewController: UIViewController {
     private func setDimmedViewBackgroundColor() {
         dimmedView.backgroundColor = (presentationStyle == .fullScreen) ? .clear : dimmedView.backgroundColor
     }
-    
-    private func setFullScreenStyle() {
-        view.layer.cornerRadius = 20
-        view.layer.masksToBounds = true
-    }
-    
+ 
     // MARK: - Make Constraints
     private func makeConstraintsOfScrollableContent() {
         let topInset = (presentationStyle == .normal) ? view.safeAreaInsets.top : 0
