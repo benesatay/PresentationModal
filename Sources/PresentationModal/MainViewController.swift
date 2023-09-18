@@ -14,7 +14,12 @@ public enum PresentationStyle {
 }
 
 protocol PresentationModalDelegate: AnyObject {
-    
+    func panLogger(_ translation: CGPoint?,
+                   _ contentViewOrigin: CGPoint?,
+                   _ safeAreaInsets: UIEdgeInsets?,
+                   _ pannedDistance: CGFloat?,
+                   _ dismissableHeight: CGFloat?,
+                   _ dragVelocity: CGPoint?)
 }
 
 open class MainViewController: UIViewController {
@@ -51,18 +56,17 @@ open class MainViewController: UIViewController {
     // MARK: - Internal Properties
     weak var delegate: PresentationModalDelegate?
     
+    // MARK: - Public Properties
+
     // MARK: - Private Properties
     
     private var contentViewOrigin: CGPoint = .zero
     private var headerViewOrigin: CGPoint = .zero
 
     private var visibleDimmedHeight: CGFloat {
-        let visibleDimmedHeight = Helper.shared.calculateVisibleDimmedViewHeight(view.frame.height, contentView.frame.height)
+        let visibleDimmedHeight = Helper.shared.calculateVisibleDimmedViewHeight(view.frame.height,
+                                                                                 contentView.frame.height)
         return (presentationStyle == .fullScreen) ? 0 : visibleDimmedHeight
-    }
-    
-    private var mainOriginY: CGFloat {
-        return view.frame.origin.y
     }
     
     private var presentationStyle: PresentationStyle = .custom
@@ -116,15 +120,10 @@ open class MainViewController: UIViewController {
     private func setStyle() {
         switch presentationStyle {
         case .normal:
-            view.layer.cornerRadius = 20
-            view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            view.layer.masksToBounds = true
+            setLayer()
             makeConstraintsOfScrollableContent()
         case .custom:
             addTapGestureToDimmedView()
-            view.layer.cornerRadius = 20
-            view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            view.layer.masksToBounds = true
         case .fullScreen:
             makeConstraintsOfScrollableContent()
         }
@@ -132,6 +131,12 @@ open class MainViewController: UIViewController {
         setHeaderViewStyle()
         setBackgroundColor()
         setDimmedViewBackgroundColor()
+    }
+    
+    private func setLayer() {
+        view.layer.cornerRadius = 20
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        view.layer.masksToBounds = true
     }
     
     private func setHeaderViewStyle() {
@@ -143,13 +148,6 @@ open class MainViewController: UIViewController {
         case.fullScreen:
             headerView.setCloseButton()
         }
-    }
-    
-    private func setBackgroundColor() {
-        let color: UIColor = .white
-        view.backgroundColor = (presentationStyle == .fullScreen) ? color : .clear
-        contentView.backgroundColor = color
-        headerView.backgroundColor = color
     }
     
     private func setDimmedViewBackgroundColor() {
@@ -232,11 +230,13 @@ open class MainViewController: UIViewController {
     }
     
     private func didPanEnded(_ gesture: UIPanGestureRecognizer) {
-        let pannedDistance = Helper.shared.calculatePannedDistance(mainOriginY, visibleDimmedHeight)
+        let pannedDistance = Helper.shared.calculatePannedDistance(view.frame.origin.y,
+                                                                   visibleDimmedHeight)
         let dragVelocity = gesture.velocity(in: view)
-        print("*** pannedDistance \(pannedDistance)")
-        print("*** constantOfDismissableHeight \(Helper.shared.constantOfDismissableHeight)")
-        print("*** dragVelocity \(dragVelocity.y)")
+        delegate?.panLogger(nil, nil, nil,
+                            pannedDistance,
+                            Helper.shared.constantOfDismissableHeight,
+                            dragVelocity)
         if dragVelocity.y >= 1100 {
             dismissView()
         } else if pannedDistance <= Helper.shared.constantOfDismissableHeight {
@@ -246,24 +246,7 @@ open class MainViewController: UIViewController {
         }
     }
     
-    // MARK: - Actions
-    @objc private func didDimmedViewTapped(_ gesture: UITapGestureRecognizer) {
-        dismissView()
-    }
-    
-    @objc private func didViewPanned(_ gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: view)
-        // Not allowing the user to drag the view upward
-        guard translation.y >= 0 else {
-            if contentViewOrigin.y != contentView.frame.origin.y {
-                didPanEnded(gesture)
-            }
-            return
-        }
-        let currentPosition = translation.y
-        print("*** Helper.shared.safeAreaInsets.top *** \(Helper.shared.safeAreaInsets.top)")
-        print("*** originPoint.y *** \(contentViewOrigin.y)")
-        print("*** currentPosition *** \(currentPosition)")
+    private func handleOrigin(by gesture: UIPanGestureRecognizer, and currentPosition: CGFloat) {
         switch gesture.state {
         case .changed:
             let offsetY = contentViewOrigin.y + currentPosition
@@ -282,12 +265,48 @@ open class MainViewController: UIViewController {
         }
     }
     
+    private func isInsideContentViewBounds(_ point: CGFloat) -> Bool {
+        return point >= 0
+    }
+    
+    private func isContentOriginInInitialPoint() -> Bool {
+        return contentViewOrigin.y == contentView.frame.origin.y
+    }
+    
+    // MARK: - Actions
+    @objc private func didDimmedViewTapped(_ gesture: UITapGestureRecognizer) {
+        dismissView()
+    }
+    
+    @objc private func didViewPanned(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: view)
+        delegate?.panLogger(translation,
+                            contentViewOrigin,
+                            Helper.shared.safeAreaInsets,
+                            nil, nil, nil)
+        let currentPosition = translation.y
+        if isInsideContentViewBounds(currentPosition) {
+            handleOrigin(by: gesture, and: currentPosition)
+        } else {
+            // Not allowing the user to drag the view upward
+            if !isContentOriginInInitialPoint() {
+                didPanEnded(gesture)
+            }
+        }
+    }
+  
+  
     // MARK: - Open Methods
     open func didViewDismissed() {
         
     }
     
     // MARK: - Public Methods
+    public final func setBackgroundColor(_ color: UIColor = .white) {
+        view.backgroundColor = (presentationStyle == .fullScreen) ? color : .clear
+        contentView.backgroundColor = color
+        headerView.backgroundColor = color
+    }
 }
 
 // MARK: - HeaderViewDelegate
