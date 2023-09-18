@@ -53,8 +53,9 @@ open class MainViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private var originPoint: CGPoint = .zero
-    
+    private var contentViewOrigin: CGPoint = .zero
+    private var headerViewOrigin: CGPoint = .zero
+
     private var visibleDimmedHeight: CGFloat {
         let visibleDimmedHeight = Helper.shared.calculateVisibleDimmedViewHeight(view.frame.height, contentView.frame.height)
         return (presentationStyle == .fullScreen) ? 0 : visibleDimmedHeight
@@ -199,15 +200,16 @@ open class MainViewController: UIViewController {
         }
                 
         DispatchQueue.main.async {
-            self.originPoint = self.contentView.frame.origin
+            self.contentViewOrigin = self.contentView.frame.origin
+            self.headerViewOrigin = self.headerView.frame.origin
         }
     }
     
     /// Set back to original position of the view controller
     private func resetOrigin() {
         UIView.animate(withDuration: 0.3) {
-            self.contentView.frame.origin = self.originPoint
-            self.headerView.frame.origin = self.originPoint
+            self.contentView.frame.origin = self.contentViewOrigin
+            self.headerView.frame.origin = self.headerViewOrigin
         }
     }
     
@@ -253,24 +255,25 @@ open class MainViewController: UIViewController {
         let translation = gesture.translation(in: view)
         // Not allowing the user to drag the view upward
         guard translation.y >= 0 else {
-            if originPoint.y != contentView.frame.origin.y {
+            if contentViewOrigin.y != contentView.frame.origin.y {
                 didPanEnded(gesture)
             }
             return
         }
         let currentPosition = translation.y
         print("*** Helper.shared.safeAreaInsets.top *** \(Helper.shared.safeAreaInsets.top)")
-        print("*** originPoint.y *** \(originPoint.y)")
+        print("*** originPoint.y *** \(contentViewOrigin.y)")
         print("*** currentPosition *** \(currentPosition)")
         switch gesture.state {
         case .changed:
-            let offsetY = originPoint.y + currentPosition
+            let offsetY = contentViewOrigin.y + currentPosition
             if presentationStyle == .fullScreen,
                offsetY <= Helper.shared.safeAreaInsets.top {
                 didPanEnded(gesture)
             } else {
+                let headerOffsetY = headerViewOrigin.y + currentPosition
                 contentView.frame.origin = CGPoint(x: 0, y: offsetY)
-                headerView.frame.origin = CGPoint(x: 0, y: offsetY)
+                headerView.frame.origin = CGPoint(x: 0, y: headerOffsetY)
             }
         case .ended:
             didPanEnded(gesture)
