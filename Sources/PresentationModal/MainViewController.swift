@@ -284,15 +284,15 @@ open class MainViewController: UIViewController {
                             contentViewOrigin,
                             Helper.shared.safeAreaInsets,
                             nil, nil, nil)
-        let currentPosition = translation.y
-        if isInsideContentViewBounds(currentPosition) {
-            handleOrigin(by: gesture, and: currentPosition)
-        } else {
-            // Not allowing the user to drag the view upward
+        // Not allowing the user to drag the view upward
+        guard isInsideContentViewBounds(translation.y) else {
             if !isContentOriginInInitialPoint() {
                 didPanEnded(gesture)
             }
+            return
         }
+        let currentPosition = translation.y
+        handleOrigin(by: gesture, and: currentPosition)
     }
   
   
