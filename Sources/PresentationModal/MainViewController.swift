@@ -130,7 +130,6 @@ open class MainViewController: UIViewController {
         
         setHeaderViewStyle()
         setBackgroundColor()
-        setDimmedViewBackgroundColor()
     }
     
     private func setLayer() {
@@ -148,10 +147,6 @@ open class MainViewController: UIViewController {
         case.fullScreen:
             headerView.setCloseButton()
         }
-    }
-    
-    private func setDimmedViewBackgroundColor() {
-        dimmedView.backgroundColor = (presentationStyle == .fullScreen) ? .clear : dimmedView.backgroundColor
     }
     
     // MARK: - Make Constraints
@@ -324,7 +319,7 @@ open class MainViewController: UIViewController {
     
     // MARK: - Public Methods
     public final func setBackgroundColor(_ color: UIColor = .white) {
-        view.backgroundColor = (presentationStyle == .fullScreen) ? color : .clear
+        view.backgroundColor = .clear
         contentView.backgroundColor = color
         headerView.backgroundColor = color
     }
