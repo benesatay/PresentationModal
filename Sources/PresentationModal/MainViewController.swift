@@ -88,6 +88,11 @@ open class MainViewController: UIViewController {
         super.viewDidLayoutSubviews()
         updatePresentationStyleByContentHeight()
         setStyle()
+        
+        
+        DispatchQueue.main.async {
+            self.holdInitialOrigins()
+        }
     }
     
     open override func viewWillDisappear(_ animated: Bool) {
@@ -177,10 +182,6 @@ open class MainViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.height.greaterThanOrEqualToSuperview()
         }
-        
-        DispatchQueue.main.async {
-            self.holdInitialOrigins()
-        }
     }
     
     private func makeConstraintsOfNoneScrollableContent() {
@@ -193,10 +194,6 @@ open class MainViewController: UIViewController {
         headerView.snp.makeConstraints { make in
             make.bottom.equalTo(contentView.snp.top)
             make.leading.trailing.equalToSuperview()
-        }
-        
-        DispatchQueue.main.async {
-            self.holdInitialOrigins()
         }
     }
     
