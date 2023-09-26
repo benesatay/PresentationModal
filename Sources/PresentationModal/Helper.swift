@@ -20,6 +20,10 @@ class Helper {
         return screenHeight/6
     }
     
+    var constantOfDragVelocity: CGFloat {
+        return 1100
+    }
+    
     var safeAreaInsets: UIEdgeInsets {
         return window?.safeAreaInsets ?? .zero
     }

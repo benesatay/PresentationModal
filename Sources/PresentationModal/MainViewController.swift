@@ -89,7 +89,6 @@ open class MainViewController: UIViewController {
         updatePresentationStyleByContentHeight()
         setStyle()
         
-        
         DispatchQueue.main.async {
             self.holdInitialOrigins()
         }
@@ -115,7 +114,6 @@ open class MainViewController: UIViewController {
         window.addSubview(dimmedView)
     }
     
-    // MARK: - Styles
     private func updatePresentationStyleByContentHeight() {
         if Helper.shared.isContentHeightOverScreen(contentView.frame.height) {
             presentationStyle = .fullScreen
@@ -154,7 +152,6 @@ open class MainViewController: UIViewController {
         }
     }
     
-    // MARK: - Make Constraints
     private func makeConstraintsOfScrollableContent() {
         let topInset = (presentationStyle == .normal) ? Helper.shared.safeAreaInsets.top : 0
         headerView.snp.removeConstraints()
@@ -205,11 +202,8 @@ open class MainViewController: UIViewController {
     private func updateOrigin(contentViewOrigin: CGPoint, headerViewOrigin: CGPoint) {
         contentView.frame.origin = contentViewOrigin
         headerView.frame.origin = headerViewOrigin
-        print("contentViewOrigin \(contentViewOrigin)")
-        print("headerViewOrigin \(headerViewOrigin)")
     }
     
-    /// Set back to original position of the view controller
     private func resetOrigin() {
         UIView.animate(withDuration: 0.3) {
             self.updateOrigin(contentViewOrigin: self.contentViewOrigin,
@@ -223,7 +217,6 @@ open class MainViewController: UIViewController {
         }
     }
     
-    // MARK: - Gestures
     private func addPanGesture() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didViewPanned(_:)))
         panGesture.delegate = self
@@ -243,7 +236,7 @@ open class MainViewController: UIViewController {
                   pannedDistance,
                   Helper.shared.constantOfDismissableHeight,
                   dragVelocity)
-        if dragVelocity.y >= 1100 {
+        if dragVelocity.y >= Helper.shared.constantOfDragVelocity {
             dismissView()
         } else if pannedDistance <= Helper.shared.constantOfDismissableHeight {
             dismissView()
