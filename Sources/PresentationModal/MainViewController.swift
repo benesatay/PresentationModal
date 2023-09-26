@@ -208,6 +208,8 @@ open class MainViewController: UIViewController {
     private func updateOrigin(contentViewOrigin: CGPoint, headerViewOrigin: CGPoint) {
         contentView.frame.origin = contentViewOrigin
         headerView.frame.origin = headerViewOrigin
+        print("contentViewOrigin \(contentViewOrigin)")
+        print("headerViewOrigin \(headerViewOrigin)")
     }
     
     /// Set back to original position of the view controller
@@ -256,7 +258,7 @@ open class MainViewController: UIViewController {
     private func handleOrigin(by gesture: UIPanGestureRecognizer, and currentPosition: CGFloat) {
         switch gesture.state {
         case .changed:
-            let offsetY = view.frame.origin.y + currentPosition
+            let offsetY = contentViewOrigin.y + currentPosition
             if presentationStyle == .fullScreen,
                offsetY <= Helper.shared.safeAreaInsets.top {
                 didPanEnded(gesture)
