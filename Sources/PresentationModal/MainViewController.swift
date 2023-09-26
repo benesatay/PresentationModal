@@ -256,7 +256,7 @@ open class MainViewController: UIViewController {
     private func handleOrigin(by gesture: UIPanGestureRecognizer, and currentPosition: CGFloat) {
         switch gesture.state {
         case .changed:
-            let offsetY = contentViewOrigin.y + currentPosition
+            let offsetY = view.frame.origin.y + currentPosition
             if presentationStyle == .fullScreen,
                offsetY <= Helper.shared.safeAreaInsets.top {
                 didPanEnded(gesture)
